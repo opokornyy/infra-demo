@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <title>Todo list</title>
+  <!-- For styling, you can either put your own CSS in static/css/ or use Tailwind CSS. -->
+  <link rel="stylesheet" href="css/main.css" />
+  <!-- Tailwind CSS imports -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- HTMX -->
+  <script src="https://unpkg.com/htmx.org@1.9.4"
+    integrity="sha384-zUfuhFKKZCbHTY6aRR46gxiqszMk5tcHjsVFxnUo8VMus4kHGVdIYVbOYYNlKmHV"
+    crossorigin="anonymous"></script>
+</head>
+
+<body>
+  <div class="centered-div">
+    <div id="main">
+      <h1 class="main-header">TODO Items</h1>
+      <div id="content-container">
+        {% for task in tasks %}
+        <div class="task-container" id="task-{{ task.id }}">
+          <input type="checkbox" id="input-{{ task.id }}" class="checkbox" hx-put="/done/{{ task.id }}"
+            hx-target="#task-{{ task.id }}" hx-swap="outerHTML" {% if task.is_done %} checked {% endif %}>
+          {% if task.is_done %}
+          <label for="input-{{ task.id }}"><s>{{ task.text }}</s></label>
+          {% else %}
+          <label for="input-{{ task.id }}">{{ task.text }}</label>
+          {% endif %}
+          <div class="button-container">
+            <button class="edit-button" hx-get="/edit/{{ task.id }}" hx-target="#task-{{ task.id }}"
+              hx-swap="outerHTML">⚒️</button>
+            <button class="delete-button" hx-delete="/task/{{ task.id }}" hx-target="#task-{{ task.id }}"
+              hx-swap="delete">❌</button>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      <div class="delete-all">
+        <button hx-delete="/tasks" hx-target="#content-container" hx-swap="innerHTML">Delete done 🔥</button>
+      </div>
+      <div>
+        <form class="task-container" hx-post="/task" hx-target="#content-container" hx-swap="aftergin">
+          <input type="text" placeholder="What needs to be done?" name="task" id="task" value="">
+          <button type="submit">➕</button>
+        </form>
+      </div>
+    </div>
+</body>
+
+</html>

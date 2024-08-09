@@ -1,0 +1,6 @@
+<div id="task-{{ task.id }}">
+    <form class="task-container" hx-put="/update/{{ task.id }}" hx-target="#task-{{ task.id }}" hx-swap="outerHTML">
+        <input type="text" name="task" id="task" value="{{ task.text }}">
+        <button type="submit">✅</button>
+    </form>
+</div>

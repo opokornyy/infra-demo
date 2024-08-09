@@ -1,0 +1,12 @@
+stages:
+  - deploy
+
+deploy_to_azure:
+  image: docker:latest
+  stage: deploy
+  tags:
+    - shared-fi
+  script:
+    - echo "2ilsuMpqomzjnJg0uAelvW6yE3RWiBQIEZ+Y94Kwve+ACRC5Bbe1" | docker login -u pa200hw2 --password-stdin pa200hw2.azurecr.io
+    - docker build -t pa200hw2.azurecr.io/rust-app -f iteration-08/Dockerfile --platform=linux/amd64 .
+    - docker push pa200hw2.azurecr.io/rust-app:latest

@@ -1,16 +1,16 @@
 # IaaC demo
 
-Deployment of a rust + htmx application that is using with mysql database to store data. Repository contains terraform scripts that creates required resources in a minikube cluster, deployment files that will deploy the application and databse into the cluster.
+Deployment of a Rust + HTMX application that uses a MySQL database to store data. The repository contains Terraform scripts that create the required resources in a Minikube cluster and deployment files that deploy the application and database into the cluster. There is also a second deployment of a simple NGINX server that only serves static data.
 
 ## Requirements
 
-Up and running [minikube](https://minikube.sigs.k8s.io/docs/) cluster with context named miniube in the ~/.kube/config and ingress addon enabled.
+An up-and-running [minikube](https://minikube.sigs.k8s.io/docs/) cluster with context named miniube in the ~/.kube/config and ingress addon enabled.
 
 ```bash
 minikube addons enable ingress
 ```
 
-Generated ssl certificate and a key stored in a tls.crt and tls.key in a root of the repository.
+A generated SSL certificate and key stored as tls.crt and tls.key in the root of the repository.
 
 ```bash
 openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout tls.key -out tls.crt
@@ -19,28 +19,36 @@ openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout tls.key -out tls.crt
 ## Usage
 
 ```bash
-# Create kubernetes resources
+# Create Kubernetes resources
 terraform -chdir=terraform apply
 ```
 
 ```bash
-# Deploy app and create database
+# Deploy the app and create the database
 kubectl apply -f manifests/deployment.yaml -n app
 ```
 
 ```bash
-# To access minikube ingress
+# To access Minikube ingress
 minikube tunnel
 ```
 
-To access the app on https://web-app.local/ we need to edit the /etc/hosts as well.
+To access the app on https://web-app.local/ you need to edit the /etc/hosts file as follows.
 
 ```bash
+# To access web app
 127.0.0.1 web-app.local
+
+# To access static web page
+127.0.0.1 static-web.local
 ```
 
-## Feature work
+## Future work
 
-TODO: terraform create db in a cloud (PaaS)
+Use PaaS database instead of an instance running in a container.
 
-TODO: move secrets to vault
+Use Vault to store required secrets.
+
+Create CI/CD pipeline.
+
+Handle transient errors in the application.

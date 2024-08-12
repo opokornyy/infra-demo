@@ -8,7 +8,7 @@ resource "kubernetes_persistent_volume" "mysql_pv" {
     storage_class_name = "manual"
 
     capacity = {
-      storage = "1Gi"
+      storage = var.database_storage_capacity
     }
 
     persistent_volume_source {
@@ -32,7 +32,7 @@ resource "kubernetes_persistent_volume_claim" "mysql_pvc" {
 
     resources {
       requests = {
-        storage = "500Mi"
+        storage = var.database_storage_capacity
       }
     }
   }

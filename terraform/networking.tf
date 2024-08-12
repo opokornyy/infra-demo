@@ -12,7 +12,7 @@ resource "kubernetes_service" "app_service" {
     type = "ClusterIP"
 
     port {
-      port = 80
+      port = var.container_ports["app"]
     }
   }
 }
@@ -35,8 +35,8 @@ resource "kubernetes_service" "db_service" {
 
     port {
       protocol    = "TCP"
-      port        = 3306
-      target_port = 3306
+      port        = var.container_ports["db"]
+      target_port = var.container_ports["db"]
     }
   }
 }
@@ -95,8 +95,8 @@ resource "kubernetes_service" "static_web_service" {
     type = "ClusterIP"
 
     port {
-      port        = 80
-      target_port = 80
+      port        = var.container_ports["app"]
+      target_port = var.container_ports["app"]
     }
   }
 }
@@ -130,7 +130,7 @@ resource "kubernetes_ingress_v1" "static_web_ingress" {
             service {
               name = kubernetes_service.static_web_service.metadata[0].name
               port {
-                number = 80
+                number = var.container_ports["app"]
               }
             }
           }

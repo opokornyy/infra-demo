@@ -9,11 +9,10 @@ resource "kubernetes_service" "app_service" {
       app = "app"
     }
 
-    type = "NodePort"
+    type = "ClusterIP"
 
     port {
-      port      = 80
-      node_port = 30001
+      port = 80
     }
   }
 }
@@ -73,6 +72,65 @@ resource "kubernetes_ingress_v1" "app_ingress" {
               name = kubernetes_service.app_service.metadata[0].name
               port {
                 number = kubernetes_service.app_service.spec[0].port[0].port
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+resource "kubernetes_service" "static_web_service" {
+  metadata {
+    name      = "static-web-service"
+    namespace = kubernetes_namespace.app.metadata[0].name
+  }
+
+  spec {
+    selector = {
+      app = "static-web"
+    }
+
+    type = "ClusterIP"
+
+    port {
+      port        = 80
+      target_port = 80
+    }
+  }
+}
+
+resource "kubernetes_ingress_v1" "static_web_ingress" {
+  metadata {
+    name      = "static-web-ingress"
+    namespace = kubernetes_namespace.app.metadata[0].name
+    labels = {
+      app = "static-web"
+    }
+    annotations = {
+      "nginx.ingress.kubernetes.io/rewrite-target" = "/"
+    }
+  }
+
+  spec {
+    tls {
+      hosts       = ["static-web.local"]
+      secret_name = "app-secret"
+    }
+
+    rule {
+      host = "static-web.local"
+      http {
+        path {
+          path      = "/"
+          path_type = "Prefix"
+
+          backend {
+            service {
+              name = kubernetes_service.static_web_service.metadata[0].name
+              port {
+                number = 80
               }
             }
           }

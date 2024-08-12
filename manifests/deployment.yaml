@@ -67,3 +67,25 @@ spec:
       - name: mysql-storage
         persistentVolumeClaim:
           claimName: mysql-pvc
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: static-web
+  labels:
+    app: static-web
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: static-web
+  template:
+    metadata:
+      labels:
+        app: static-web
+    spec:
+      containers:
+      - name: static-web
+        image: opokorny/static-page:latest
+        ports:
+        - containerPort: 80

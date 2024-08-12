@@ -1,1 +1,5 @@
+# Ignore all files in this directory
+**/.terraform/*
+
+# Ignore all tls files
 tls.*
